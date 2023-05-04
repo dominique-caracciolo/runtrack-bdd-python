@@ -1,5 +1,4 @@
 import mysql.connector 
-
 db = mysql.connector.connect(
   host="localhost",
   user="admin",
@@ -44,57 +43,14 @@ result = mycursor.fetchall()
 for x in result:
    print("Salaire a plus de 3000 euros:", x)
 
-class Employee:
-    columns = ['id', 'nom', 'prenom', 'salaire', 'id_service']
+from classe import Employe
 
-    def __init__(self, host, user, password, database):
-        self.db = mysql.connector.connect(
-            host=host,
-            user=user,
-            password=password,
-            database=database
-        )
-        self.cursor = self.db.cursor()
-
-    def create_employee_table(self):
-        self.cursor.execute("""
-            CREATE TABLE IF NOT EXISTS employes (
-                id INT AUTO_INCREMENT PRIMARY KEY,
-                nom VARCHAR(255),
-                prenom VARCHAR(255),
-                salaire FLOAT,
-                id_service INT
-            )
-        """)
-        self.db.commit()
-
-    def insert_employee(self, nom, prenom, salaire, id_service):
-        self.cursor.execute("""
-            INSERT INTO employes (nom, prenom, salaire, id_service)
-            VALUES (%s, %s, %s, %s)
-        """, (nom, prenom, salaire, id_service))
-        self.db.commit()
-
-    def get_employee_by_salary(self, seuil_salaire):
-        self.cursor.execute("""
-            SELECT * FROM employes WHERE salaire > %s
-        """, (seuil_salaire,))
-        result = self.cursor.fetchall()
-        return result
-
-    def update_employee_salary(self, id_employee, new_salaire):
-        self.cursor.execute("""
-            UPDATE employes SET salaire = %s WHERE id = %s
-        """, (new_salaire, id_employee))
-        self.db.commit()
-
-    def delete_employee(self, id_employee):
-        self.cursor.execute("""
-            DELETE FROM employes WHERE id = %s
-        """, (id_employee,))
-        self.db.commit()
-
-    def __del__(self):
-        self.db.close()
-
-
+db = Employe()
+id = db.create_employes("Dupont", "Jean", 2500.23, 1)
+print("Le nouvel employé a été créé avec l'ID:", id)
+employe = db.read_by_id_employes(id)
+print("L'employé avec l'ID", id, "est:", employe)
+db.update(id, "Dupont", "Jean-Michel", 3000, 1)
+print("L'employe avec l'id",id," a etais mis a jour")
+db.delete_employes(id)
+print("L'employer avec l'id",id,"a etais supprimer")
